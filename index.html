@@ -1,592 +1,483 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AES - Apprendre, Enseigner et Soutenir</title>
-    <style>
-        body {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AES - Apprendre, Enseigner et Soutenir</title>
+  <style>
+    /* Base */
+    :root{
+      --primary:#3498db;
+      --primary-dark:#2980b9;
+      --accent:#f39c12;
+      --bg:#ecf0f1;
+      --text:#2c3e50;
+      --muted:#7f8c8d;
+      --success:#27ae60;
+      --danger:#e74c3c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:0;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height:1.6; color:#333; background:#fff;
+    }
+    .container{max-width:1200px; margin:0 auto; padding:0 20px}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    /* Header & nav */
+    header{
+      background:linear-gradient(135deg,#2c3e50,#3498db);
+      color:#fff; padding:1rem 0; position:fixed; width:100%; top:0; z-index:1000;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+    nav{display:flex; justify-content:space-between; align-items:center}
+    .logo{font-size:1.8rem; font-weight:bold}
+    .nav-links{display:flex; list-style:none; margin:0; padding:0; gap:2rem}
+    .nav-links a{color:#fff; text-decoration:none; transition:color .3s}
+    .nav-links a:hover{color:var(--accent)}
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+    /* Hero */
+    main{margin-top:80px}
+    .hero{
+      background:linear-gradient(rgba(52,152,219,0.8), rgba(44,62,80,0.8)),
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23ecf0f1" width="1200" height="600"/><circle fill="%233498db" cx="200" cy="150" r="50" opacity="0.3"/><circle fill="%23e74c3c" cx="800" cy="300" r="80" opacity="0.2"/><circle fill="%23f39c12" cx="1000" cy="100" r="60" opacity="0.3"/></svg>');
+      color:#fff; text-align:center; padding:100px 0; background-size:cover;
+    }
+    .hero h1{font-size:3rem; margin:.2rem 0}
+    .hero h2{font-size:1.5rem; font-weight:500; margin:.2rem 0 1rem}
+    .hero p{font-size:1.15rem; max-width:700px; margin:0 auto 2rem}
+    .cta-button{
+      display:inline-block; background:var(--accent); color:#fff; padding:14px 26px;
+      text-decoration:none; border-radius:50px; font-weight:700; transition:.3s
+    }
+    .cta-button:hover{filter:brightness(.9)}
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Sections */
+    .section{padding:60px 0; background:#fff}
+    .branches{display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem}
+    .branch-card{
+      background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,.08);
+      border:1px solid #ecf0f1
+    }
+    .branch-icon{font-size:2rem; margin-bottom:.5rem}
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
+    /* Forms */
+    .form-container{
+      background:#fff; padding:2rem; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,.1); max-width:600px; margin:0 auto;
+    }
+    .form-group{margin-bottom:1.2rem}
+    .form-group label{display:block; margin-bottom:.45rem; font-weight:700; color:var(--text)}
+    .form-group input, .form-group select, .form-group textarea{
+      width:100%; padding:12px; border:2px solid #ecf0f1; border-radius:8px; font-size:1rem; transition:border-color .2s
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus{outline:none; border-color:var(--primary)}
+    .submit-btn{
+      background:var(--primary); color:#fff; padding:14px 18px; border:none; border-radius:8px; font-weight:700;
+      cursor:pointer; transition:background .2s; width:100%;
+    }
+    .submit-btn:hover{background:var(--primary-dark)}
+    .success-message{
+      background:var(--success); color:#fff; padding:1rem; border-radius:8px; margin-bottom:1rem; text-align:center
+    }
+    .hidden{display:none}
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 2rem;
-        }
+    /* Footer */
+    footer{background:#2c3e50; color:#fff; text-align:center; padding:2rem 0}
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #f39c12;
-        }
-
-        /* Main content */
-        main {
-            margin-top: 80px;
-        }
-
-        .hero {
-            background: linear-gradient(rgba(52, 152, 219, 0.8), rgba(44, 62, 80, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23ecf0f1" width="1200" height="600"/><circle fill="%233498db" cx="200" cy="150" r="50" opacity="0.3"/><circle fill="%23e74c3c" cx="800" cy="300" r="80" opacity="0.2"/><circle fill="%23f39c12" cx="1000" cy="100" r="60" opacity="0.3"/></svg>');
-            color: white;
-            text-align: center;
-            padding: 100px 0;
-            background-size: cover;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: #f39c12;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
-        }
-
-        .cta-button:hover {
-            background: #e67e22;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
-        }
-
-        /* Sections */
-        .section {
-            padding: 80px 0;
-        }
-
-        .section:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .section h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #2c3e50;
-        }
-
-        .branches {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .branch-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .branch-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .branch-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .branch-card h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        /* Forms */
-        .form-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .submit-btn {
-            background: #3498db;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            width: 100%;
-        }
-
-        .submit-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Footer */
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .branches {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .success-message {
-            background: #27ae60;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-    </style>
+    /* Responsive */
+    @media (max-width: 968px){.branches{grid-template-columns:1fr 1fr}}
+    @media (max-width: 640px){
+      .nav-links{flex-direction:column; gap:1rem}
+      .hero h1{font-size:2rem}
+      .hero p{font-size:1rem}
+      .branches{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <div class="logo">AES</div>
-            <ul class="nav-links">
-                <li><a href="#accueil">Accueil</a></li>
-                <li><a href="#nos-branches">Nos Branches</a></li>
-                <li><a href="#mission">Notre Mission</a></li>
-                <li><a href="#valeurs">Nos Valeurs</a></li>
-                <li><a href="#demande-bourse">Demande de Bourse</a></li>
-                <li><a href="#rejoindre">Nous Rejoindre</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <nav class="container">
+      <div class="logo">AES</div>
+      <ul class="nav-links">
+        <li><a href="#accueil">Accueil</a></li>
+        <li><a href="#nos-branches">Nos Branches</a></li>
+        <li><a href="#mission">Notre Mission</a></li>
+        <li><a href="#valeurs">Nos Valeurs</a></li>
+        <li><a href="#demande-bourse">Demande de Bourse</a></li>
+        <li><a href="#rejoindre">Nous Rejoindre</a></li>
+        <li><a href="#don">Don</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <main>
-        <section id="accueil" class="hero">
-            <div class="container">
-                <h1>AES</h1>
-                <h2>Apprendre, Enseigner et Soutenir</h2>
-                <p>Notre association accompagne les étudiants et enseignants dans leur parcours éducatif à travers trois missions essentielles</p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="#nos-branches" class="cta-button">Découvrir nos missions</a>
-                    <a href="#don" class="cta-button" style="background: #e74c3c;">Faire un don</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="nos-branches" class="section">
-            <div class="container">
-                <h2>Nos Trois Branches</h2>
-                <div class="branches">
-                    <div class="branch-card">
-                        <div class="branch-icon">📚</div>
-                        <h3>Apprendre</h3>
-                        <p>Nous proposons des cursus de formation adaptés aux besoins actuels du marché du travail. Nos programmes sont conçus pour offrir une formation complète et pratique.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">👨‍🏫</div>
-                        <h3>Enseigner</h3>
-                        <p>Nous aidons les enseignants à se perfectionner grâce à des formations continues, des ateliers pédagogiques et un accompagnement personnalisé.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">💰</div>
-                        <h3>Soutenir</h3>
-                        <p>Nous soutenons financièrement les étudiants de divers horizons via des bourses d'études pour rendre l'éducation accessible à tous.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mission" class="section">
-            <div class="container">
-                <h2>Notre Mission</h2>
-                <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-                    <p style="font-size: 1.2rem; margin-bottom: 2rem; color: #2c3e50;">
-                        AES s'engage à démocratiser l'accès à l'éducation et à l'excellence pédagogique. Notre mission est de créer un écosystème éducatif inclusif où chaque individu peut apprendre, enseigner et être soutenu dans son parcours.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section id="valeurs" class="section">
-            <div class="container">
-                <h2>Nos Valeurs</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div class="branch-card">
-                        <div class="branch-icon">🤝</div>
-                        <h3>Solidarité</h3>
-                        <p>Nous croyons en l'entraide et au soutien mutuel pour construire une société plus juste et équitable.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">⚖️</div>
-                        <h3>Équité</h3>
-                        <p>Chaque personne mérite les mêmes chances d'accès à une éducation de qualité, peu importe son origine.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">🌟</div>
-                        <h3>Excellence</h3>
-                        <p>Nous visons l'excellence dans tous nos programmes et accompagnements pour garantir la réussite.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">🔄</div>
-                        <h3>Innovation</h3>
-                        <p>Nous adaptons constamment nos méthodes aux évolutions du monde éducatif et professionnel.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">🌱</div>
-                        <h3>Développement</h3>
-                        <p>Nous accompagnons la croissance personnelle et professionnelle de chaque bénéficiaire.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">🎯</div>
-                        <h3>Engagement</h3>
-                        <p>Notre engagement total envers nos missions guide chacune de nos actions et décisions.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="demande-bourse" class="section">
-            <div class="container">
-                <h2>Demande Préalable de Bourse</h2>
-                <div class="form-container">
-                    <div id="bourse-success" class="success-message hidden">
-                        Votre demande préalable a été envoyée avec succès ! Nous vous recontacterons prochainement pour constituer votre dossier complet.
-                    </div>
-                    <form id="bourse-form" action="https://formspree.io/f/xldpdpop" method="POST">
-<input type="text" name="_gotcha" style="display:none">
-<input type="hidden" name="_subject" value="Demande de bourse">
-
-                        <div class="form-group">
-                            <label for="nom">Nom *</label>
-                            <input type="text" id="nom" name="nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="prenom">Prénom *</label>
-                            <input type="text" id="prenom" name="prenom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="age">Âge *</label>
-                            <input type="number" id="age" name="age" min="16" max="99" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="formation-nom">Nom de la formation *</label>
-                            <input type="text" id="formation-nom" name="formation-nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="organisme">Organisme de formation *</label>
-                            <input type="text" id="organisme" name="organisme" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cout-formation">Coût de la formation (€) *</label>
-                            <input type="number" id="cout-formation" name="cout-formation" min="0" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="formation-souhaitee">Formation pour laquelle vous souhaitez être aidé *</label>
-                            <textarea id="formation-souhaitee" name="formation-souhaitee" rows="4" placeholder="Décrivez brièvement la formation et vos motivations..." required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Envoyer la demande préalable</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <section id="rejoindre" class="section">
-            <div class="container">
-                <h2>Nous Rejoindre</h2>
-                <div style="max-width: 800px; margin: 0 auto; text-align: center; margin-bottom: 3rem;">
-                    <p style="font-size: 1.2rem; color: #2c3e50;">
-                        Rejoignez notre équipe de bénévoles passionnés et contribuez à notre mission d'éducation pour tous !
-                    </p>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
-                    <div class="branch-card">
-                        <div class="branch-icon">👥</div>
-                        <h3>Bénévole Formateur</h3>
-                        <p>Partagez vos compétences en animant des formations et en accompagnant les apprenants dans leur parcours.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">📋</div>
-                        <h3>Bénévole Administratif</h3>
-                        <p>Aidez-nous dans la gestion des dossiers de bourses, l'organisation d'événements et les tâches administratives.</p>
-                    </div>
-                    <div class="branch-card">
-                        <div class="branch-icon">💡</div>
-                        <h3>Bénévole Conseil</h3>
-                        <p>Apportez votre expertise pour orienter nos bénéficiaires et les aider dans leurs choix de formation.</p>
-                    </div>
-                </div>
-                <div class="form-container">
-                    <div id="rejoindre-success" class="success-message hidden">
-                        Votre candidature a été envoyée avec succès ! Nous vous contacterons prochainement pour discuter de votre engagement.
-                    </div>
-                    <form id="rejoindre-form" action="https://formspree.io/f/xldpdpop" method="POST">
-<input type="text" name="_gotcha" style="display:none">
-<input type="hidden" name="_subject" value="Candidature bénévole">
-
-                        <div class="form-group">
-                            <label for="rejoindre-nom">Nom *</label>
-                            <input type="text" id="rejoindre-nom" name="rejoindre-nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-prenom">Prénom *</label>
-                            <input type="text" id="rejoindre-prenom" name="rejoindre-prenom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-email">Email *</label>
-                            <input type="email" id="rejoindre-email" name="rejoindre-email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-telephone">Téléphone</label>
-                            <input type="tel" id="rejoindre-telephone" name="rejoindre-telephone">
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-role">Rôle souhaité *</label>
-                            <select id="rejoindre-role" name="rejoindre-role" required>
-                                <option value="">Choisissez un rôle</option>
-                                <option value="formateur">Bénévole Formateur</option>
-                                <option value="administratif">Bénévole Administratif</option>
-                                <option value="conseil">Bénévole Conseil</option>
-                                <option value="autre">Autre (préciser dans le message)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-competences">Vos compétences et expériences *</label>
-                            <textarea id="rejoindre-competences" name="rejoindre-competences" rows="4" placeholder="Décrivez vos compétences, expériences et motivations..." required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="rejoindre-disponibilite">Disponibilité *</label>
-                            <select id="rejoindre-disponibilite" name="rejoindre-disponibilite" required>
-                                <option value="">Choisissez votre disponibilité</option>
-                                <option value="quelques-heures">Quelques heures par mois</option>
-                                <option value="quelques-heures-semaine">Quelques heures par semaine</option>
-                                <option value="regulier">Engagement régulier</option>
-                                <option value="ponctuel">Missions ponctuelles</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="submit-btn">Envoyer ma candidature</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <section id="don" class="section">
-            <div class="container">
-                <h2>Faire un Don</h2>
-                <div style="max-width: 600px; margin: 0 auto; text-align: center; margin-bottom: 3rem;">
-                    <p style="font-size: 1.2rem; color: #2c3e50; margin-bottom: 2rem;">
-                        Votre générosité permet de financer les bourses d'études et de développer nos programmes éducatifs.
-                    </p>
-                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem;">
-                        <p style="color: #856404; margin: 0;">
-                            <strong>🎯 Votre impact :</strong> 50€ = 1 mois de formation • 200€ = Bourse complète • 500€ = Formation d'un enseignant
-                        </p>
-                    </div>
-                </div>
-                <div class="form-container">
-                    <div id="don-success" class="success-message hidden">
-                        Merci pour votre générosité ! Votre demande de don a été enregistrée. Nous vous contacterons pour finaliser le processus de don sécurisé.
-                    </div>
-                    <form id="don-form" action="https://formspree.io/f/xldpdpop" method="POST">
-<input type="text" name="_gotcha" style="display:none">
-<input type="hidden" name="_subject" value="Promesse de don">
-
-                        <div class="form-group">
-                            <label for="don-montant">Montant du don (€) *</label>
-                            <select id="don-montant" name="don-montant" required>
-                                <option value="">Choisissez un montant</option>
-                                <option value="25">25€</option>
-                                <option value="50">50€</option>
-                                <option value="100">100€</option>
-                                <option value="200">200€</option>
-                                <option value="500">500€</option>
-                                <option value="autre">Autre montant</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="montant-autre" style="display: none;">
-                            <label for="don-montant-autre">Montant personnalisé (€) *</label>
-                            <input type="number" id="don-montant-autre" name="don-montant-autre" min="1" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="don-type">Type de don *</label>
-                            <select id="don-type" name="don-type" required>
-                                <option value="">Choisissez le type</option>
-                                <option value="ponctuel">Don ponctuel</option>
-                                <option value="mensuel">Don mensuel</option>
-                                <option value="annuel">Don annuel</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="don-nom">Nom *</label>
-                            <input type="text" id="don-nom" name="don-nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="don-email">Email *</label>
-                            <input type="email" id="don-email" name="don-email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="don-message">Message (optionnel)</label>
-                            <textarea id="don-message" name="don-message" rows="3" placeholder="Un message d'encouragement ou des précisions sur l'utilisation souhaitée de votre don..."></textarea>
-                        </div>
-                        <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #0c5460;">
-                            <strong>Note :</strong> Ceci est un formulaire de demande. Nous vous contacterons pour finaliser votre don via un processus sécurisé.
-                        </div>
-                        <button type="submit" class="submit-btn" style="background: #e74c3c;">Faire un don</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="section">
-            <div class="container">
-                <h2>Nous Contacter</h2>
-                <div class="form-container">
-                    <div id="contact-success" class="success-message hidden">
-                        Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
-                    </div>
-                    <form id="contact-form" action="https://formspree.io/f/xldpdpop" method="POST">
-<input type="text" name="_gotcha" style="display:none">
-<input type="hidden" name="_subject" value="Contact depuis le site">
-
-                        <div class="form-group">
-                            <label for="contact-nom">Nom *</label>
-                            <input type="text" id="contact-nom" name="contact-nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-email">Email *</label>
-                            <input type="email" id="contact-email" name="contact-email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-sujet">Sujet *</label>
-                            <select id="contact-sujet" name="contact-sujet" required>
-                                <option value="">Choisissez un sujet</option>
-                                <option value="formation">Cursus de formation</option>
-                                <option value="enseignant">Perfectionnement enseignant</option>
-                                <option value="bourse">Demande de bourse</option>
-                                <option value="autre">Autre</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-message">Message *</label>
-                            <textarea id="contact-message" name="contact-message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Envoyer le message</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 AES - Apprendre, Enseigner et Soutenir. Tous droits réservés.</p>
+  <main>
+    <!-- Accueil -->
+    <section id="accueil" class="hero">
+      <div class="container">
+        <h1>AES</h1>
+        <h2>Apprendre, Enseigner et Soutenir</h2>
+        <p>Notre association accompagne les étudiants et enseignants dans leur parcours éducatif à travers trois missions essentielles.</p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+          <a href="#nos-branches" class="cta-button">Découvrir nos missions</a>
+          <a href="#don" class="cta-button" style="background: var(--danger)">Faire un don</a>
         </div>
-    </footer>
+      </div>
+    </section>
 
-    </body>
+    <!-- Branches -->
+    <section id="nos-branches" class="section">
+      <div class="container">
+        <h2>Nos Trois Branches</h2>
+        <div class="branches">
+          <div class="branch-card">
+            <div class="branch-icon">📚</div>
+            <h3>Apprendre</h3>
+            <p>Nous proposons des cursus de formation adaptés aux besoins actuels du marché du travail. Nos programmes sont conçus pour offrir une formation complète et pratique.</p>
+          </div>
+          <div class="branch-card">
+            <div class="branch-icon">👨‍🏫</div>
+            <h3>Enseigner</h3>
+            <p>Nous aidons les enseignants à se perfectionner grâce à des formations continues, des ateliers pédagogiques et un accompagnement personnalisé.</p>
+          </div>
+          <div class="branch-card">
+            <div class="branch-icon">💰</div>
+            <h3>Soutenir</h3>
+            <p>Nous soutenons financièrement les étudiants via des bourses d'études pour rendre l'éducation accessible à tous.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mission -->
+    <section id="mission" class="section">
+      <div class="container">
+        <h2>Notre Mission</h2>
+        <div style="max-width:800px; margin:0 auto; text-align:center;">
+          <p style="font-size:1.2rem; margin-bottom:2rem; color:#2c3e50;">
+            AES s'engage à démocratiser l'accès à l'éducation et à l'excellence pédagogique. Notre mission est de créer un écosystème éducatif inclusif où chacun peut apprendre, enseigner et être soutenu dans son parcours.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Valeurs -->
+    <section id="valeurs" class="section">
+      <div class="container">
+        <h2>Nos Valeurs</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem;">
+          <div class="branch-card"><div class="branch-icon">🤝</div><h3>Solidarité</h3><p>Entraide et soutien mutuel pour une société plus juste et équitable.</p></div>
+          <div class="branch-card"><div class="branch-icon">⚖️</div><h3>Équité</h3><p>Les mêmes chances d'accès à une éducation de qualité pour tous.</p></div>
+          <div class="branch-card"><div class="branch-icon">🌟</div><h3>Excellence</h3><p>Des programmes d'excellence pour garantir la réussite.</p></div>
+          <div class="branch-card"><div class="branch-icon">🔄</div><h3>Innovation</h3><p>Des méthodes adaptées aux évolutions du monde éducatif.</p></div>
+          <div class="branch-card"><div class="branch-icon">🌱</div><h3>Développement</h3><p>Accompagner la croissance personnelle et professionnelle.</p></div>
+          <div class="branch-card"><div class="branch-icon">🎯</div><h3>Engagement</h3><p>Un engagement total qui guide nos actions.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demande Bourse -->
+    <section id="demande-bourse" class="section">
+      <div class="container">
+        <h2>Demande Préalable de Bourse</h2>
+        <div class="form-container">
+          <div id="bourse-success" class="success-message hidden">
+            Votre demande préalable a été envoyée avec succès ! Nous vous recontacterons prochainement pour constituer votre dossier complet.
+          </div>
+          <form id="bourse-form" action="https://formspree.io/f/xldpdpop" method="POST">
+            <input type="hidden" name="_subject" value="Demande de bourse (AES)">
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="form-group">
+              <label for="prenom">Prénom *</label>
+              <input type="text" id="prenom" name="prenom" required>
+            </div>
+            <div class="form-group">
+              <label for="age">Âge *</label>
+              <input type="number" id="age" name="age" min="16" max="99" required>
+            </div>
+            <div class="form-group">
+              <label for="bourse-email">Email *</label>
+              <input type="email" id="bourse-email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="formation-nom">Nom de la formation *</label>
+              <input type="text" id="formation-nom" name="formation-nom" required>
+            </div>
+            <div class="form-group">
+              <label for="organisme">Organisme de formation *</label>
+              <input type="text" id="organisme" name="organisme" required>
+            </div>
+            <div class="form-group">
+              <label for="cout-formation">Coût de la formation (€) *</label>
+              <input type="number" id="cout-formation" name="cout-formation" min="0" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="formation-souhaitee">Formation pour laquelle vous souhaitez être aidé *</label>
+              <textarea id="formation-souhaitee" name="formation-souhaitee" rows="4" required></textarea>
+            </div>
+            <input type="text" name="_gotcha" style="display:none">
+            <button type="submit" class="submit-btn">Envoyer la demande préalable</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rejoindre -->
+    <section id="rejoindre" class="section">
+      <div class="container">
+        <h2>Nous Rejoindre</h2>
+        <div style="max-width:800px; margin:0 auto; text-align:center; margin-bottom:3rem;">
+          <p style="font-size:1.2rem; color:#2c3e50;">
+            Rejoignez notre équipe de bénévoles passionnés et contribuez à notre mission d'éducation pour tous !
+          </p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; margin-bottom:3rem;">
+          <div class="branch-card"><div class="branch-icon">👥</div><h3>Bénévole Formateur</h3><p>Animez des formations et accompagnez les apprenants.</p></div>
+          <div class="branch-card"><div class="branch-icon">📋</div><h3>Bénévole Administratif</h3><p>Gestion des dossiers, organisation d'événements, tâches administratives.</p></div>
+          <div class="branch-card"><div class="branch-icon">💡</div><h3>Bénévole Conseil</h3><p>Partagez votre expertise pour orienter nos bénéficiaires.</p></div>
+        </div>
+        <div class="form-container">
+          <div id="rejoindre-success" class="success-message hidden">
+            Votre candidature a été envoyée avec succès ! Nous vous contacterons prochainement pour discuter de votre engagement.
+          </div>
+          <form id="rejoindre-form" action="https://formspree.io/f/xldpdpop" method="POST">
+            <input type="hidden" name="_subject" value="Candidature bénévole (AES)">
+            <div class="form-group">
+              <label for="rejoindre-nom">Nom *</label>
+              <input type="text" id="rejoindre-nom" name="rejoindre-nom" required>
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-prenom">Prénom *</label>
+              <input type="text" id="rejoindre-prenom" name="rejoindre-prenom" required>
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-email">Email *</label>
+              <input type="email" id="rejoindre-email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-telephone">Téléphone</label>
+              <input type="tel" id="rejoindre-telephone" name="rejoindre-telephone">
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-role">Rôle souhaité *</label>
+              <select id="rejoindre-role" name="rejoindre-role" required>
+                <option value="">Choisissez un rôle</option>
+                <option value="formateur">Bénévole Formateur</option>
+                <option value="administratif">Bénévole Administratif</option>
+                <option value="conseil">Bénévole Conseil</option>
+                <option value="autre">Autre (préciser dans le message)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-competences">Vos compétences et expériences *</label>
+              <textarea id="rejoindre-competences" name="rejoindre-competences" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="rejoindre-disponibilite">Disponibilité *</label>
+              <select id="rejoindre-disponibilite" name="rejoindre-disponibilite" required>
+                <option value="">Choisissez votre disponibilité</option>
+                <option value="quelques-heures">Quelques heures par mois</option>
+                <option value="quelques-heures-semaine">Quelques heures par semaine</option>
+                <option value="regulier">Engagement régulier</option>
+                <option value="ponctuel">Missions ponctuelles</option>
+              </select>
+            </div>
+            <input type="text" name="_gotcha" style="display:none">
+            <button type="submit" class="submit-btn">Envoyer ma candidature</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Don -->
+    <section id="don" class="section">
+      <div class="container">
+        <h2>Faire un Don</h2>
+        <div style="max-width:600px; margin:0 auto; text-align:center; margin-bottom:2rem;">
+          <p style="font-size:1.1rem; color:#2c3e50; margin-bottom:1rem;">
+            Votre générosité permet de financer les bourses d'études et de développer nos programmes éducatifs.
+          </p>
+          <div style="background:#fff3cd; border:1px solid #ffeaa7; border-radius:10px; padding:1rem; margin-bottom:1rem;">
+            <p style="color:#856404; margin:0;"><strong>🎯 Votre impact :</strong> 50€ = 1 mois de formation • 200€ = Bourse complète • 500€ = Formation d'un enseignant</p>
+          </div>
+        </div>
+        <div class="form-container">
+          <div id="don-success" class="success-message hidden">
+            Merci pour votre générosité ! Votre demande de don a été enregistrée. Nous vous contacterons pour finaliser le processus de don sécurisé.
+          </div>
+          <form id="don-form" action="https://formspree.io/f/xldpdpop" method="POST">
+            <input type="hidden" name="_subject" value="Promesse de don (AES)">
+            <div class="form-group">
+              <label for="don-montant">Montant du don (€) *</label>
+              <select id="don-montant" name="don-montant" required>
+                <option value="">Choisissez un montant</option>
+                <option value="25">25€</option>
+                <option value="50">50€</option>
+                <option value="100">100€</option>
+                <option value="200">200€</option>
+                <option value="500">500€</option>
+                <option value="autre">Autre montant</option>
+              </select>
+            </div>
+            <div class="form-group" id="montant-autre" style="display:none;">
+              <label for="don-montant-autre">Montant personnalisé (€) *</label>
+              <input type="number" id="don-montant-autre" name="don-montant-autre" min="1" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="don-type">Type de don *</label>
+              <select id="don-type" name="don-type" required>
+                <option value="">Choisissez le type</option>
+                <option value="ponctuel">Don ponctuel</option>
+                <option value="mensuel">Don mensuel</option>
+                <option value="annuel">Don annuel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="don-nom">Nom *</label>
+              <input type="text" id="don-nom" name="don-nom" required>
+            </div>
+            <div class="form-group">
+              <label for="don-email">Email *</label>
+              <input type="email" id="don-email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="don-message">Message (optionnel)</label>
+              <textarea id="don-message" name="don-message" rows="3" placeholder="Un message d'encouragement ou des précisions sur l'utilisation souhaitée de votre don."></textarea>
+            </div>
+            <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:.95rem; color:#0c5460;">
+              <strong>Note :</strong> Ceci est un formulaire de demande. Nous vous contacterons pour finaliser votre don via un processus sécurisé.
+            </div>
+            <input type="text" name="_gotcha" style="display:none">
+            <button type="submit" class="submit-btn" style="background:var(--danger)">Faire un don</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>Nous Contacter</h2>
+        <div class="form-container">
+          <div id="contact-success" class="success-message hidden">
+            Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
+          </div>
+          <form id="contact-form" action="https://formspree.io/f/xldpdpop" method="POST">
+            <input type="hidden" name="_subject" value="Contact depuis le site (AES)">
+            <div class="form-group">
+              <label for="contact-nom">Nom *</label>
+              <input type="text" id="contact-nom" name="contact-nom" required>
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Email *</label>
+              <input type="email" id="contact-email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="contact-sujet">Sujet *</label>
+              <select id="contact-sujet" name="contact-sujet" required>
+                <option value="">Choisissez un sujet</option>
+                <option value="formation">Cursus de formation</option>
+                <option value="enseignant">Perfectionnement enseignant</option>
+                <option value="bourse">Demande de bourse</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contact-message">Message *</label>
+              <textarea id="contact-message" name="message" rows="5" required></textarea>
+            </div>
+            <input type="text" name="_gotcha" style="display:none">
+            <button type="submit" class="submit-btn">Envoyer le message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 AES - Apprendre, Enseigner et Soutenir. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    });
+
+    // Don: afficher champ "autre montant"
+    const donSelect = document.getElementById('don-montant');
+    if(donSelect){
+      donSelect.addEventListener('change', function(){
+        const block = document.getElementById('montant-autre');
+        const input = document.getElementById('don-montant-autre');
+        if(this.value === 'autre'){
+          block.style.display='block'; input.required = true;
+        }else{
+          block.style.display='none'; input.required = false; input.value='';
+        }
+      });
+    }
+
+    // Gestion envoi Formspree générique
+    async function hookForm(idForm, idSuccess){
+      const form = document.getElementById(idForm);
+      if(!form) return;
+      const success = document.getElementById(idSuccess);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // état visuel (optionnel : désactiver bouton)
+        const btn = form.querySelector('button[type="submit"]');
+        if(btn){ btn.disabled = true; btn.textContent = "Envoi…"; }
+
+        try{
+          const data = new FormData(form);
+          const res = await fetch(form.action, { method:'POST', body:data, headers:{'Accept':'application/json'} });
+          if(res.ok){
+            form.reset();
+            if(success){ success.classList.remove('hidden'); success.scrollIntoView({behavior:'smooth', block:'center'}); }
+          }else{
+            // Essaye de remonter l'erreur Formspree
+            const json = await res.json().catch(()=>({}));
+            alert(json.errors?.[0]?.message || "Erreur d’envoi. Réessaie.");
+          }
+        }catch(err){
+          alert("Erreur réseau. Vérifie ta connexion.");
+        }finally{
+          if(btn){ btn.disabled = false; btn.textContent = btn.getAttribute('data-label') || "Envoyer"; }
+        }
+      });
+    }
+    // mémorise label d'origine
+    document.querySelectorAll('form button[type="submit"]').forEach(b=>b.setAttribute('data-label', b.textContent));
+
+    hookForm('bourse-form', 'bourse-success');
+    hookForm('rejoindre-form', 'rejoindre-success');
+    hookForm('don-form', 'don-success');
+    hookForm('contact-form', 'contact-success');
+
+    // Surbrillance du lien actif
+    window.addEventListener('scroll', function(){
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-links a');
+      let current = '';
+      sections.forEach(section => {
+        const top = section.offsetTop - 100;
+        if(scrollY >= top){ current = section.getAttribute('id'); }
+      });
+      navLinks.forEach(link => {
+        link.style.color = '';
+        if(link.getAttribute('href') === '#' + current){ link.style.color = '#f39c12'; }
+      });
+    });
+  </script>
+</body>
 </html>
