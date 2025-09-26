@@ -22,6 +22,7 @@
       font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       line-height:1.6; color:#333; background:#fff;
     }
+    .no-scroll{overflow:hidden}
     .container{max-width:1200px; margin:0 auto; padding:0 20px}
 
     /* Header & nav */
@@ -30,11 +31,47 @@
       color:#fff; padding:1rem 0; position:fixed; width:100%; top:0; z-index:1000;
       box-shadow:0 2px 10px rgba(0,0,0,0.1);
     }
-    nav{display:flex; justify-content:space-between; align-items:center}
+    nav{display:flex; justify-content:space-between; align-items:center; position:relative}
     .logo{font-size:1.8rem; font-weight:bold}
     .nav-links{display:flex; list-style:none; margin:0; padding:0; gap:2rem}
     .nav-links a{color:#fff; text-decoration:none; transition:color .3s}
     .nav-links a:hover{color:var(--accent)}
+
+    /* Burger */
+    .burger{
+      display:none; background:none; border:none; cursor:pointer; padding:.5rem; margin-left:1rem;
+    }
+    .burger-box{width:28px; height:22px; position:relative}
+    .burger-line{
+      position:absolute; left:0; right:0; height:3px; background:#fff; border-radius:2px; transition:.25s transform,.25s opacity,.25s top;
+    }
+    .burger-line:nth-child(1){top:0}
+    .burger-line:nth-child(2){top:9px}
+    .burger-line:nth-child(3){top:18px}
+    .burger[aria-expanded="true"] .burger-line:nth-child(1){top:9px; transform:rotate(45deg)}
+    .burger[aria-expanded="true"] .burger-line:nth-child(2){opacity:0}
+    .burger[aria-expanded="true"] .burger-line:nth-child(3){top:9px; transform:rotate(-45deg)}
+
+    /* Mobile panel (hidden by default, shows on small screens) */
+    @media (max-width: 968px){
+      .nav-links{
+        position:fixed;
+        top:64px; /* approx header height */
+        right:0;
+        width:min(90vw, 360px);
+        height:calc(100vh - 64px);
+        background:#2c3e50;
+        flex-direction:column;
+        gap:1rem;
+        padding:1.5rem;
+        box-shadow:-10px 0 30px rgba(0,0,0,.25);
+        transform:translateX(100%);
+        transition:transform .3s ease;
+        z-index:999;
+      }
+      .nav-links.open{transform:translateX(0)}
+      .burger{display:inline-block}
+    }
 
     /* Hero */
     main{margin-top:80px}
@@ -84,10 +121,9 @@
     /* Footer */
     footer{background:#2c3e50; color:#fff; text-align:center; padding:2rem 0}
 
-    /* Responsive */
+    /* Responsive tweaks */
     @media (max-width: 968px){.branches{grid-template-columns:1fr 1fr}}
     @media (max-width: 640px){
-      .nav-links{flex-direction:column; gap:1rem}
       .hero h1{font-size:2rem}
       .hero p{font-size:1rem}
       .branches{grid-template-columns:1fr}
@@ -98,7 +134,18 @@
   <header>
     <nav class="container">
       <div class="logo">AES</div>
-      <ul class="nav-links">
+
+      <!-- Burger button (mobile) -->
+      <button class="burger" aria-label="Ouvrir le menu" aria-controls="primary-navigation" aria-expanded="false">
+        <span class="burger-box" aria-hidden="true">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </span>
+      </button>
+
+      <!-- Navigation -->
+      <ul id="primary-navigation" class="nav-links">
         <li><a href="#accueil">Accueil</a></li>
         <li><a href="#nos-branches">Nos Branches</a></li>
         <li><a href="#mission">Notre Mission</a></li>
@@ -301,7 +348,7 @@
             Votre générosité permet de financer les bourses d'études et de développer nos programmes éducatifs.
           </p>
           <div style="background:#fff3cd; border:1px solid #ffeaa7; border-radius:10px; padding:1rem; margin-bottom:1rem;">
-            <p style="color:#856404; margin:0;"><strong>🎯 Votre impact :</strong> 50€ = 1 mois de formation • 200€ = Bourse complète • 500€ = Formation d'un enseignant</p>
+            <p style="color:#856404; margin:0;"><strong>🎯 Votre impact :</strong> 150€ = 1 mois de formation • 1800€ = Bourse complète • 500€ = Formation d'un enseignant</p>
           </div>
         </div>
         <div class="form-container">
@@ -434,7 +481,6 @@
       const success = document.getElementById(idSuccess);
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        // état visuel (optionnel : désactiver bouton)
         const btn = form.querySelector('button[type="submit"]');
         if(btn){ btn.disabled = true; btn.textContent = "Envoi…"; }
 
@@ -445,7 +491,6 @@
             form.reset();
             if(success){ success.classList.remove('hidden'); success.scrollIntoView({behavior:'smooth', block:'center'}); }
           }else{
-            // Essaye de remonter l'erreur Formspree
             const json = await res.json().catch(()=>({}));
             alert(json.errors?.[0]?.message || "Erreur d’envoi. Réessaie.");
           }
@@ -478,6 +523,40 @@
         if(link.getAttribute('href') === '#' + current){ link.style.color = '#f39c12'; }
       });
     });
+
+    // Burger toggle
+    const burger = document.querySelector('.burger');
+    const nav = document.getElementById('primary-navigation');
+
+    function closeMenu(){
+      burger.setAttribute('aria-expanded','false');
+      nav.classList.remove('open');
+      document.body.classList.remove('no-scroll');
+    }
+    function openMenu(){
+      burger.setAttribute('aria-expanded','true');
+      nav.classList.add('open');
+      document.body.classList.add('no-scroll');
+    }
+
+    if(burger && nav){
+      burger.addEventListener('click', ()=>{
+        const expanded = burger.getAttribute('aria-expanded') === 'true';
+        expanded ? closeMenu() : openMenu();
+      });
+
+      // Fermer le menu quand on clique sur un lien (sur mobile)
+      nav.querySelectorAll('a').forEach(a=>{
+        a.addEventListener('click', ()=>{
+          if (window.matchMedia('(max-width: 968px)').matches) closeMenu();
+        });
+      });
+
+      // Fermer au redimensionnement si on repasse en desktop
+      window.addEventListener('resize', ()=>{
+        if (!window.matchMedia('(max-width: 968px)').matches) closeMenu();
+      });
+    }
   </script>
 </body>
 </html>
